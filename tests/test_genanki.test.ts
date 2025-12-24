@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import JSZip from 'jszip';
-import Database from 'better-sqlite3';
+import { Database } from '../src/genanki/db';
 
 const TEST_MODEL = new Model(
   234567, 'foomodel',

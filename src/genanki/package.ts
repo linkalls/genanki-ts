@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import Database from 'better-sqlite3';
+import { Database } from './db';
 import JSZip from 'jszip';
 
 import { APKG_COL } from './apkg_col';
