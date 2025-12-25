@@ -1,10 +1,9 @@
 # Agent Instructions
 
-This repository now contains a TypeScript port of the `genanki` library.
+This repository contains the `genanki-ts` library, a TypeScript port of `genanki`.
 
-- Python source is in `genanki/`
 - TypeScript source is in `src/genanki/`
-- TypeScript tests are in `tests/test_genanki.test.ts`
-- TypeScript build output is in `dist/`
+- TypeScript tests are in `tests/`
+- Build output is in `dist/`
 
-When working on the TypeScript code, please run tests using `npm test`.
+When working on the TypeScript code, please run tests using `bun test`.

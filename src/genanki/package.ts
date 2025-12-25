@@ -16,10 +16,21 @@ function* count(start: number = 0, step: number = 1): Generator<number> {
   }
 }
 
+/**
+ * Represents an Anki Package (.apkg file).
+ *
+ * A Package can contain one or more Decks and media files.
+ */
 export class Package {
   decks: Deck[];
   media_files: string[];
 
+  /**
+   * Creates a new Package.
+   *
+   * @param deck_or_decks - A single Deck or an array of Decks to include.
+   * @param media_files - A list of paths to media files (images, audio) to include in the package.
+   */
   constructor(deck_or_decks: Deck | Deck[], media_files: string[] | null = null) {
     if (deck_or_decks instanceof Deck) {
       this.decks = [deck_or_decks];
@@ -30,6 +41,12 @@ export class Package {
     this.media_files = Array.from(new Set(media_files || []));
   }
 
+  /**
+   * Generates the .apkg file and writes it to the specified path.
+   *
+   * @param file - The output file path (e.g., 'output.apkg').
+   * @param timestamp - Optional timestamp to use for creation time (defaults to current time).
+   */
   async write_to_file(file: string, timestamp: number | null = null) {
     const dbfilename = path.join(os.tmpdir(), `genanki_ts_${Date.now()}.anki2`);
 
@@ -82,6 +99,13 @@ export class Package {
     }
   }
 
+  /**
+   * Internal method to write package data to the temporary SQLite database.
+   *
+   * @param db - The database instance.
+   * @param timestamp - Creation timestamp.
+   * @param id_gen - ID generator.
+   */
   write_to_db(db: any, timestamp: number, id_gen: Generator<number>) {
     db.exec(APKG_SCHEMA);
     db.exec(APKG_COL);

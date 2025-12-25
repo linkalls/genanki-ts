@@ -28,6 +28,9 @@ class TagList extends Array<string> {
   // Not implementing full array overrides for now, users should be careful or we can use a Proxy if needed.
 }
 
+/**
+ * Represents a specific Note (an instance of a Model with data).
+ */
 export class Note {
   static _INVALID_HTML_TAG_RE = /<(?!(?:\/?[a-zA-Z0-9]+(?: .*|\/?)>|!--|!\[CDATA\[))(?:.|\n)*?>/g;
 
@@ -39,6 +42,16 @@ export class Note {
   private _guid?: string;
   private _cards: Card[] | null = null;
 
+  /**
+   * Creates a new Note.
+   *
+   * @param model - The Model this note follows.
+   * @param fields - The data for the fields defined in the model.
+   * @param sort_field - The value used for sorting. If null, uses the field at `model.sort_field_index`.
+   * @param tags - A list of tags to apply to the note.
+   * @param guid - A unique ID. If null, one is generated from the fields.
+   * @param due - Due date (mostly internal use).
+   */
   constructor(
     model: Model,
     fields: string[],
@@ -55,6 +68,9 @@ export class Note {
     if (guid !== null) this._guid = guid;
   }
 
+  /**
+   * Gets the sort field value.
+   */
   get sort_field(): string {
     return this._sort_field || this.fields[this.model.sort_field_index];
   }
@@ -63,6 +79,9 @@ export class Note {
     this._sort_field = val;
   }
 
+  /**
+   * Gets the list of tags.
+   */
   get tags(): string[] {
     return this._tags;
   }
@@ -72,6 +91,9 @@ export class Note {
     this._tags = val;
   }
 
+  /**
+   * Generates and returns the cards for this note based on the model type.
+   */
   get cards(): Card[] {
     if (this._cards) return this._cards;
 
@@ -148,6 +170,9 @@ export class Note {
     return rv;
   }
 
+  /**
+   * Gets the GUID for the note.
+   */
   get guid(): string {
     if (this._guid === undefined) {
       return guid_for(...this.fields);
@@ -183,6 +208,14 @@ export class Note {
     });
   }
 
+  /**
+   * Writes the note to the Anki database.
+   *
+   * @param cursor - Database cursor.
+   * @param timestamp - Modification timestamp.
+   * @param deck_id - The ID of the deck containing this note.
+   * @param id_gen - Generator for note IDs.
+   */
   write_to_db(cursor: any, timestamp: number, deck_id: number, id_gen: Generator<number>) {
     this.fields = _fix_deprecated_builtin_models_and_warn(this.model, this.fields);
     this._check_number_model_fields_matches_num_fields();

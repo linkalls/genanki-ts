@@ -2,6 +2,11 @@ import { Note } from './note';
 import { Model } from './model';
 import { Package } from './package';
 
+/**
+ * Represents an Anki Deck.
+ *
+ * A Deck is a container for Notes.
+ */
 export class Deck {
   deck_id: number;
   name: string;
@@ -9,6 +14,13 @@ export class Deck {
   notes: Note[];
   models: { [key: string]: Model };
 
+  /**
+   * Creates a new Deck.
+   *
+   * @param deck_id - A unique identifier for the deck (e.g., generated timestamp or hash).
+   * @param name - The name of the deck.
+   * @param description - Description of the deck.
+   */
   constructor(deck_id: number, name: string, description: string = '') {
     this.deck_id = deck_id;
     this.name = name;
@@ -17,14 +29,31 @@ export class Deck {
     this.models = {};
   }
 
+  /**
+   * Adds a note to the deck.
+   *
+   * @param note - The Note to add.
+   */
   add_note(note: Note) {
     this.notes.push(note);
   }
 
+  /**
+   * Manually adds a model to the deck's model list.
+   *
+   * Note: Models are automatically added when adding notes, so this is rarely needed manually.
+   *
+   * @param model - The Model to add.
+   */
   add_model(model: Model) {
     this.models[model.model_id.toString()] = model;
   }
 
+  /**
+   * Serializes the deck structure to JSON for the Anki database.
+   *
+   * @returns The JSON representation of the deck configuration.
+   */
   to_json() {
     return {
       "collapsed": false,
@@ -56,6 +85,13 @@ export class Deck {
     };
   }
 
+  /**
+   * Writes the deck and its notes to the database.
+   *
+   * @param cursor - Database cursor.
+   * @param timestamp - Modification timestamp.
+   * @param id_gen - Generator for IDs.
+   */
   write_to_db(cursor: any, timestamp: number, id_gen: Generator<number>) {
     if (typeof this.deck_id !== 'number') {
       throw new TypeError(`Deck .deck_id must be an integer, not ${this.deck_id}.`);
@@ -87,6 +123,13 @@ export class Deck {
     }
   }
 
+  /**
+   * Creates a package containing this deck and writes it to a file.
+   *
+   * Shortcut for `new Package(deck).write_to_file(file)`.
+   *
+   * @param file - The path to the output .apkg file.
+   */
   write_to_file(file: string) {
     new Package(this).write_to_file(file);
   }

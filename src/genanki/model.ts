@@ -1,12 +1,33 @@
 import mustache from 'mustache';
 import yaml from 'js-yaml';
 
+/**
+ * Represents an Anki Note Model (also known as a Note Type).
+ *
+ * A Model defines the structure of notes, including their fields and the templates
+ * used to generate cards from those fields.
+ */
 export class Model {
+  /**
+   * Constant for the Standard (Front/Back) model type.
+   */
   static FRONT_BACK = 0;
+
+  /**
+   * Constant for the Cloze deletion model type.
+   */
   static CLOZE = 1;
+
+  /**
+   * Default LaTeX prefix used in card generation.
+   */
   static DEFAULT_LATEX_PRE = '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n'
                        + '\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n'
                        + '\\begin{document}\n';
+
+  /**
+   * Default LaTeX suffix used in card generation.
+   */
   static DEFAULT_LATEX_POST = '\\end{document}';
 
   model_id: number;
@@ -20,6 +41,19 @@ export class Model {
   sort_field_index: number;
   private _req: any[] | null = null;
 
+  /**
+   * Creates a new Model.
+   *
+   * @param model_id - A unique identifier for the model (e.g., generated timestamp or hash).
+   * @param name - The name of the model.
+   * @param fields - A list of field objects (e.g. `[{name: 'Front'}, {name: 'Back'}]`) or a YAML string defining them.
+   * @param templates - A list of template objects or a YAML string defining them.
+   * @param css - CSS styling for the cards.
+   * @param model_type - The type of model (`Model.FRONT_BACK` or `Model.CLOZE`).
+   * @param latex_pre - LaTeX header.
+   * @param latex_post - LaTeX footer.
+   * @param sort_field_index - The index of the field used for sorting in the browser.
+   */
   constructor(
     model_id: number,
     name: string,
@@ -45,6 +79,10 @@ export class Model {
     this.set_templates(templates);
   }
 
+  /**
+   * Sets the fields for the model.
+   * @param fields - Array of field definitions or a YAML string.
+   */
   set_fields(fields: any[] | string) {
     if (Array.isArray(fields)) {
       this.fields = fields;
@@ -53,6 +91,10 @@ export class Model {
     }
   }
 
+  /**
+   * Sets the templates for the model.
+   * @param templates - Array of template definitions or a YAML string.
+   */
   set_templates(templates: any[] | string) {
     if (Array.isArray(templates)) {
       this.templates = templates;
@@ -61,6 +103,11 @@ export class Model {
     }
   }
 
+  /**
+   * Computes the required fields for each template.
+   *
+   * @returns An array of requirements for card generation.
+   */
   get req(): any[] {
     if (this._req) return this._req;
 
@@ -116,6 +163,13 @@ export class Model {
     return req;
   }
 
+  /**
+   * Serializes the model to a JSON object for database insertion.
+   *
+   * @param timestamp - Modification timestamp.
+   * @param deck_id - ID of the deck this model is associated with (usually set at runtime).
+   * @returns The JSON representation of the model.
+   */
   to_json(timestamp: number, deck_id: number) {
     this.templates.forEach((tmpl, ord) => {
       tmpl['ord'] = ord;
