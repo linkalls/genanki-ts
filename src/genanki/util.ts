@@ -8,6 +8,14 @@ const BASE91_TABLE = [
   ';', '<', '=', '>', '?', '@', '[', ']', '^', '_', '`', '{', '|', '}', '~'
 ];
 
+/**
+ * Generates a GUID for a note based on its fields.
+ *
+ * This mimics Anki's method of generating a stable ID from content so that duplicates can be detected.
+ *
+ * @param values - The field values or other data to include in the hash.
+ * @returns A unique identifier string using a custom Base91 encoding.
+ */
 export function guid_for(...values: any[]): string {
   const hash_str = values.map(String).join('__');
 
